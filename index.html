@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>3D Симулатор за паркиране</title>
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <!-- Three.js и cannon-es се зареждат директно през CDN (без build процес) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+      "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- 3D платно -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- HUD: ниво, таймер, точки, скорост, предавка -->
+  <div id="hud">
+    <div class="hud-row hud-top">
+      <div class="hud-box">
+        <span class="hud-label">НИВО</span>
+        <span id="hud-level" class="hud-value">1</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">ВРЕМЕ</span>
+        <span id="hud-time" class="hud-value">0.0</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">ТОЧКИ</span>
+        <span id="hud-score" class="hud-value">0</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">ЩЕТИ</span>
+        <span id="hud-damage" class="hud-value">0</span>
+      </div>
+    </div>
+
+    <div class="hud-speed">
+      <span id="hud-gear" class="hud-gear">D</span>
+      <div class="hud-speed-val">
+        <span id="hud-speed">0</span><span class="hud-unit">km/h</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Съобщения (предупреждение за сблъсък / успех) -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Touch управление -->
+  <div id="touch-ui">
+    <!-- Лява група: волан -->
+    <div class="ctrl-group ctrl-left">
+      <button class="ctrl-btn steer" id="btn-left" aria-label="Волан наляво">⟲</button>
+      <button class="ctrl-btn steer" id="btn-right" aria-label="Волан надясно">⟳</button>
+    </div>
+
+    <!-- Дясна група: газ / спирачка-заден ход -->
+    <div class="ctrl-group ctrl-right">
+      <button class="ctrl-btn pedal brake" id="btn-brake" aria-label="Спирачка / заден ход">▼</button>
+      <button class="ctrl-btn pedal gas" id="btn-gas" aria-label="Газ напред">▲</button>
+    </div>
+  </div>
+
+  <!-- Помощни бутони горе-вдясно -->
+  <div id="aux-ui">
+    <button class="aux-btn" id="btn-camera" aria-label="Смяна на изглед">📷</button>
+    <button class="aux-btn" id="btn-sound" aria-label="Звук">🔊</button>
+    <button class="aux-btn" id="btn-restart" aria-label="Рестарт на нивото">↺</button>
+  </div>
+
+  <!-- Начален екран с инструкции на български -->
+  <div id="start-overlay" class="overlay">
+    <div class="overlay-card">
+      <h1>🅿️ 3D Симулатор за паркиране</h1>
+      <p class="subtitle">Оптимизиран за iPad с touch управление</p>
+      <div class="instructions">
+        <h2>Как се играе</h2>
+        <ul>
+          <li><b>Отляво</b> са бутоните за волана: <b>⟲ наляво</b> и <b>⟳ надясно</b>.</li>
+          <li><b>Отдясно</b> са педалите: <b>▲ газ напред</b> и <b>▼ спирачка / заден ход</b>.</li>
+          <li>Задръж бутоните с палци — реагират на задържане, не на единично докосване.</li>
+          <li>Воланът работи по-малко при висока скорост — карай плавно.</li>
+          <li>📷 сменя изгледа (зад колата / отгоре) за по-лесно паркиране.</li>
+          <li>Вкарай колата изцяло в маркираното място, под правилен ъгъл, и спри.</li>
+          <li>Не удряй колите, стълбовете и конусите — щетите свалят точки!</li>
+        </ul>
+        <p class="hint">Помощните линии зад колата се извиват според волана — като камера за заден ход.</p>
+      </div>
+      <button id="btn-start" class="primary-btn">▶ Старт</button>
+    </div>
+  </div>
+
+  <!-- Екран между нивата / при успех -->
+  <div id="level-overlay" class="overlay hidden">
+    <div class="overlay-card">
+      <h1 id="level-title">Паркирано успешно! 🎉</h1>
+      <div id="level-stats" class="level-stats"></div>
+      <button id="btn-next" class="primary-btn">▶ Следващо ниво</button>
+    </div>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
