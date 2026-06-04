@@ -1,15 +1,16 @@
 import * as THREE from 'three';
 
-import { createPhysicsWorld } from './physics.js';
+// ?v= е за избягване на кеширане — увеличи числото при нова версия
+import { createPhysicsWorld } from './physics.js?v=2';
 import { setupLighting, createGround, createCity, createParkingSpot,
-         createParkedCar, createPole, createCone } from './environment.js';
-import { Car } from './car.js';
-import { LEVELS } from './levels.js';
-import { Controls } from './controls.js';
-import { HUD } from './hud.js';
-import { AudioFX } from './audio.js';
-import { GuideLines } from './guidelines.js';
-import { checkParked, computeScore } from './parking.js';
+         createParkedCar, createPole, createCone } from './environment.js?v=2';
+import { Car } from './car.js?v=2';
+import { LEVELS } from './levels.js?v=2';
+import { Controls } from './controls.js?v=2';
+import { HUD } from './hud.js?v=2';
+import { AudioFX } from './audio.js?v=2';
+import { GuideLines } from './guidelines.js?v=2';
+import { checkParked, computeScore } from './parking.js?v=2';
 
 class Game {
   constructor() {
