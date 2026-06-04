@@ -306,7 +306,80 @@ html, body {
 }
 .level-stats .stat-row b { color: #4ade80; }
 
-/* По-малки бутони на тесни екрани */
-@media (max-width: 700px) {
-  .ctrl-btn { width: 82px; height: 82px; font-size: 34px; }
+/* ===== Адаптация за телефон ===== */
+
+/* По-тесни екрани */
+@media (max-width: 760px) {
+  .ctrl-btn { width: 78px; height: 78px; font-size: 32px; }
+  .ctrl-group { gap: 14px; }
+  .hud-value { font-size: 19px; }
+  .hud-box { padding: 6px 12px; min-width: 66px; }
+}
+
+/* Нисък екран (телефон в хоризонтален режим) — най-важно за играта */
+@media (max-height: 500px) {
+  .ctrl-btn { width: 62px; height: 62px; font-size: 26px; border-width: 2px; }
+  .ctrl-group { bottom: max(10px, env(safe-area-inset-bottom)); gap: 10px; }
+  .ctrl-left { left: max(12px, env(safe-area-inset-left)); }
+  .ctrl-right { right: max(12px, env(safe-area-inset-right)); }
+
+  #hud { padding-top: max(6px, env(safe-area-inset-top)); }
+  .hud-row.hud-top { gap: 6px; }
+  .hud-box { padding: 4px 10px; min-width: 56px; border-radius: 10px; }
+  .hud-label { font-size: 9px; }
+  .hud-value { font-size: 16px; }
+
+  .hud-speed { padding: 4px 12px; gap: 8px; bottom: max(8px, env(safe-area-inset-bottom)); border-radius: 12px; }
+  .hud-gear { font-size: 22px; min-width: 22px; }
+  .hud-speed-val { font-size: 22px; }
+  .hud-unit { font-size: 10px; }
+
+  .aux-btn { width: 42px; height: 42px; font-size: 19px; border-radius: 11px; }
+  #aux-ui { gap: 7px; }
+
+  /* По-компактен начален екран */
+  .overlay-card { padding: 16px 18px; }
+  .overlay-card h1 { font-size: 21px; }
+  .subtitle { font-size: 12px; margin-bottom: 10px; }
+  .instructions { padding: 10px 12px; margin-bottom: 12px; }
+  .instructions li { font-size: 12.5px; }
+  .primary-btn { padding: 12px 32px; font-size: 17px; }
+}
+
+/* Много нисък екран — допълнително смаляване */
+@media (max-height: 380px) {
+  .ctrl-btn { width: 54px; height: 54px; font-size: 22px; }
+}
+
+/* ===== Подсказка за завъртане (телефон в портретен режим) ===== */
+#rotate-hint { display: none; }
+
+@media (orientation: portrait) and (max-width: 600px) {
+  #rotate-hint {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    background: radial-gradient(circle at 50% 40%, rgba(30, 41, 70, 0.97), rgba(5, 8, 14, 0.99));
+  }
+}
+
+.rotate-icon {
+  font-size: 64px;
+  display: inline-block;
+  animation: rotateNudge 1.8s ease-in-out infinite;
+}
+.rotate-inner p {
+  margin-top: 18px;
+  font-size: 18px;
+  color: #cdd8ea;
+  line-height: 1.4;
+}
+@keyframes rotateNudge {
+  0%, 100% { transform: rotate(-12deg); }
+  50% { transform: rotate(78deg); }
 }
