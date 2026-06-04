@@ -186,6 +186,8 @@ export class Car {
     vehicle.setSteeringValue(this.steering, 1);
 
     // --- Газ / спирачка / заден ход ---
+    // ВАЖНО: при тази конфигурация на RaycastVehicle положителна сила
+    // придвижва колата напред (далеч от камерата).
     let engineForce = 0;
     let brake = 0;
     this.braking = false;
@@ -195,17 +197,15 @@ export class Car {
     const movingBackward = speed < -0.6;
 
     if (input.gas) {
-      this.gear = 'D';
-      engineForce = -this.maxForce; // -Z е напред при тази конфигурация
+      engineForce = this.maxForce; // напред
     } else if (input.brake) {
       if (movingForward) {
-        // Спираме докато се движим напред
+        // Спираме, докато се движим напред
         brake = this.brakeStrength;
         this.braking = true;
       } else {
         // Заден ход
-        this.gear = 'R';
-        engineForce = this.maxReverseForce;
+        engineForce = -this.maxReverseForce;
         this.reversing = true;
       }
     }
@@ -222,10 +222,10 @@ export class Car {
     // Спирачка на всички колела
     for (let i = 0; i < 4; i++) vehicle.setBrake(brake, i);
 
-    // Определяне на предавката за HUD
-    if (engineForce > 0 || (movingBackward && !input.gas)) {
+    // Предавка за HUD: R при заден ход или движение назад, иначе D
+    if (this.reversing || movingBackward) {
       this.gear = 'R';
-    } else if (input.gas || movingForward) {
+    } else {
       this.gear = 'D';
     }
 
