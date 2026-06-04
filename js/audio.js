@@ -20,19 +20,28 @@ export class AudioFX {
 
     this.engineGain = this.ctx.createGain();
     this.engineGain.gain.value = 0.0;
-    this.engineGain.connect(this.master);
 
+    // Мек нискочестотен филтър — премахва дразнещите високи честоти
+    this.engineFilter = this.ctx.createBiquadFilter();
+    this.engineFilter.type = 'lowpass';
+    this.engineFilter.frequency.value = 480;
+    this.engineFilter.Q.value = 0.6;
+    this.engineGain.connect(this.engineFilter);
+    this.engineFilter.connect(this.master);
+
+    // Основен тон — мек триъгълник (вместо дразнещ sawtooth)
     this.osc1 = this.ctx.createOscillator();
-    this.osc1.type = 'sawtooth';
-    this.osc1.frequency.value = 60;
+    this.osc1.type = 'triangle';
+    this.osc1.frequency.value = 70;
     this.osc1.connect(this.engineGain);
     this.osc1.start();
 
+    // Суб-октава — чист синус за плътност, без бръмчене
     this.osc2 = this.ctx.createOscillator();
-    this.osc2.type = 'square';
-    this.osc2.frequency.value = 30;
+    this.osc2.type = 'sine';
+    this.osc2.frequency.value = 35;
     const g2 = this.ctx.createGain();
-    g2.gain.value = 0.5;
+    g2.gain.value = 0.6;
     this.osc2.connect(g2);
     g2.connect(this.engineGain);
     this.osc2.start();
@@ -50,11 +59,16 @@ export class AudioFX {
   updateEngine(speedKmh, gas) {
     if (!this.started || !this.ctx) return;
     const t = this.ctx.currentTime;
-    const f = 55 + speedKmh * 4.5 + (gas ? 25 : 0);
-    this.osc1.frequency.setTargetAtTime(f, t, 0.08);
-    this.osc2.frequency.setTargetAtTime(f * 0.5, t, 0.08);
-    const vol = 0.04 + Math.min(speedKmh / 60, 1) * 0.16 + (gas ? 0.06 : 0);
-    this.engineGain.gain.setTargetAtTime(vol, t, 0.1);
+    // По-нисък и по-спокоен тон, плавна промяна
+    const f = 62 + speedKmh * 2.4 + (gas ? 10 : 0);
+    this.osc1.frequency.setTargetAtTime(f, t, 0.14);
+    this.osc2.frequency.setTargetAtTime(f * 0.5, t, 0.14);
+    // Филтърът се отваря леко със скоростта (по-жив, но не дразнещ)
+    const cutoff = 400 + Math.min(speedKmh / 60, 1) * 450 + (gas ? 100 : 0);
+    this.engineFilter.frequency.setTargetAtTime(cutoff, t, 0.18);
+    // По-тих от преди
+    const vol = 0.03 + Math.min(speedKmh / 70, 1) * 0.09 + (gas ? 0.025 : 0);
+    this.engineGain.gain.setTargetAtTime(vol, t, 0.12);
   }
 
   // Кратък шум за спирачка

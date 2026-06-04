@@ -58,7 +58,9 @@ export class GuideLines {
   // car: { x, z, yaw, steering }
   update(car) {
     const N = this.N;
-    const k = Math.tan(car.steering) / this.wheelbase; // кривина
+    // Линиите сочат назад (посоката на заден ход). При волан наляво
+    // дъгата трябва да се извива наляво — затова знакът е обърнат.
+    const k = -Math.tan(car.steering) / this.wheelbase; // кривина
     const ribbonW = 0.09;
 
     // Локални централни точки по дъгата (зад колата = +Z локално)
